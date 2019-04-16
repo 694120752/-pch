@@ -9,4 +9,14 @@ common-mui.js
 common-wxminip.js
 配合微信小程序的pch 与业务分开
 
+组件中生命周期里要取消setData 防止内存泄露
+detached() {
+    this.setData = (data, callBack) => {
+      return;
+    }
+  }
+请求接受所有类型
+wx.request({headers:{"Accept":"*/*"}});
+
+
 
