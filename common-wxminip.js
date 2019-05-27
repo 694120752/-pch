@@ -1,10 +1,11 @@
 module.exports = {
-    getEntry: getEntry, //获取json节点  
-    isObjectNotEmpty: isObjectNotEmpty, // 对象是否为非空
-    isNotNil: isNotNil, // 判断某个节点是否为空
-    get: Get,
-	post: Post,
-	upload: Upload
+  getEntry: getEntry, //获取json节点  
+  isObjectNotEmpty: isObjectNotEmpty, // 对象是否为非空
+  isNotNil: isNotNil, // 判断某个节点是否为空
+  get: Get,
+  post: Post,
+  upload: Upload,
+  formatNumber: formatNumber // 保留2位小数，去掉末尾的0
 }
 
 /**
@@ -29,10 +30,12 @@ module.exports = {
 
                 var str = getEntry(jsonData,["a","c","d"]);
                 var arr = getEntry(jsonData,["a","e"]);
+                var any = getEntry(jsonData,["lalal"],"q");
 
 
                 console.log(str);        ----->NO
                 console.log(arr);        ----->[ 1, 2, 3 ]
+                console.log(any);        ----->q
  * 
  * 
  * 
@@ -40,13 +43,13 @@ module.exports = {
  */
 
 function getEntry(obj, rules, defaultValue = null) {
-    if (typeof obj === 'object') {
-        return rules.reduce((xs, x) => {
-            return (xs && xs[x]) ? xs[x] : defaultValue
-        }, obj)
-    } else {
-        return defaultValue;
-    }
+  if (typeof obj === 'object') {
+    return rules.reduce((xs, x) => {
+      return (xs && xs[x]) ? xs[x] : defaultValue
+    }, obj)
+  } else {
+    return defaultValue;
+  }
 }
 
 
@@ -55,10 +58,10 @@ function getEntry(obj, rules, defaultValue = null) {
  * @param obj 对象
  */
 function isObjectNotEmpty(obj) {
-    for (var n in obj) {
-        return true;
-    }
-    return false;
+  for (var n in obj) {
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -66,7 +69,7 @@ function isObjectNotEmpty(obj) {
  * @param val 对象
  */
 function isNotNil(val) {
-    return val != null && val != "null" && val != "undefined" && val != undefined && val != '';
+  return val != null && val != "null" && val != "undefined" && val != undefined && val != '';
 }
 
 /**
@@ -75,15 +78,15 @@ function isNotNil(val) {
  * @param {分割字符} splitStr 
  */
 function array2string(array, splitStr) {
-    var str = "";
-    for (const key in array) {
-        const element = array[key];
-        str += element + splitStr;
-    }
-    if (str.length > 0) {
-        str = str.substr(0, str.length - 1);
-    }
-    return str;
+  var str = "";
+  for (const key in array) {
+    const element = array[key];
+    str += element + splitStr;
+  }
+  if (str.length > 0) {
+    str = str.substr(0, str.length - 1);
+  }
+  return str;
 }
 
 /**
@@ -97,73 +100,109 @@ function array2string(array, splitStr) {
  * 
  */
 function isPhoneX(back) {
-    wx.getSystemInfo({
-        success: function (res) {
-            var type = res.model;
-            if (type.indexOf("iPhone X") != -1 || type.indexOf("iPhone XS") != -1 || type.indexOf("iPhone XR") != -1 || type.indexOf("iPhone10,3") != -1 || type.indexOf("iPhone10,6") != -1 || type.indexOf("iPhone11,2") != -1 || type.indexOf("iPhone11,4") != -1 || type.indexOf("iPhone11,6") != -1 || type.indexOf("iPhone11,8") != -1) {
-                return back(true);
-            } else {
-                return back(false);
-            }
-        },
-        fail: function (res) {
-            return back(false);
-        }
-    })
+  wx.getSystemInfo({
+    success: function (res) {
+      var type = res.model;
+      if (type.indexOf("iPhone X") != -1 || type.indexOf("iPhone XS") != -1 || type.indexOf("iPhone XR") != -1 || type.indexOf("iPhone10,3") != -1 || type.indexOf("iPhone10,6") != -1 || type.indexOf("iPhone11,2") != -1 || type.indexOf("iPhone11,4") != -1 || type.indexOf("iPhone11,6") != -1 || type.indexOf("iPhone11,8") != -1) {
+        return back(true);
+      } else {
+        return back(false);
+      }
+    },
+    fail: function (res) {
+      return back(false);
+    }
+  })
 }
 
 function Get(url, data, cb) {
-	wx.request({
-		method: 'GET',
-		url: url,
-		data: data,
-		success: (res) => {
-			typeof cb == "function" && cb(res.data, "");
-		},
-		fail: (err) => {
-			typeof cb == "function" && cb({}, err.errMsg);
-			console.log("出错了", url);
-		},
-		complete: () => {
-		}
-	});
+  wx.request({
+    method: 'GET',
+    url: url,
+    data: data,
+    success: (res) => {
+      typeof cb == "function" && cb(res.data, "");
+    },
+    fail: (err) => {
+      typeof cb == "function" && cb({}, err.errMsg);
+      console.log("出错了", url);
+    },
+    complete: () => {}
+  });
 };
 
 function Post(url, data, cb) {
-	wx.request({
-		method: 'POST',
-		url: url,
-		data: data,
-		success: (res) => {
-			typeof cb == "function" && cb(res.data, "");
-		},
-		fail: (err) => {
-			typeof cb == "function" && cb({}, err.errMsg);
-			// console.log("http请求:"+config.HTTP_url);
-			console.log(err)
-			console.log("出错了", url);
-		},
-		complete: () => {
-		}
-	});
+  wx.request({
+    method: 'POST',
+    url: url,
+    data: data,
+    success: (res) => {
+      typeof cb == "function" && cb(res.data, "");
+    },
+    fail: (err) => {
+      typeof cb == "function" && cb({}, err.errMsg);
+      // console.log("http请求:"+config.HTTP_url);
+      console.log(err)
+      console.log("出错了", url);
+    },
+    complete: () => {}
+  });
 };
 
 function Upload(url, file, data, cb) {
-	wx.uploadFile({
-		url: url,
-		filePath: file,
-		name: "file",
-		formData: data,
-		success: (res) => {
-			if (typeof (res.data) == "string") {
-				typeof cb == "function" && cb(JSON.parse(res.data), "");
-			} else {
-				typeof cb == "function" && cb(res.data, "");
-			}
-		},
-		fail: (err) => {
-			typeof cb == "function" && cb(null, err.errMsg);
-		}
-	});
+  wx.uploadFile({
+    url: url,
+    filePath: file,
+    name: "file",
+    formData: data,
+    success: (res) => {
+      if (typeof (res.data) == "string") {
+        typeof cb == "function" && cb(JSON.parse(res.data), "");
+      } else {
+        typeof cb == "function" && cb(res.data, "");
+      }
+    },
+    fail: (err) => {
+      typeof cb == "function" && cb(null, err.errMsg);
+    }
+  });
 };
 
+
+
+
+/**
+ * 保留2位小数，去掉末尾的0
+ */
+function formatNumber(num) {
+  if (isNaN(num)) {
+    return 0;
+  } else {
+    var index = (num + "").indexOf('.');
+    if (index >= 0) {
+      var arr = (num + "").split('.');
+      if (arr.length > 1) {
+        if (arr[1].length >= 2) {
+          if (arr[1].charAt(0) == '0' && arr[1].charAt(1) == '0')
+            return arr[0];
+          else if (arr[1].charAt(0) == '0' && arr[1].charAt(1) != '0')
+            return arr[0] + "." + arr[1].charAt(0) + arr[1].charAt(1);
+          else if (arr[1].charAt(0) != '0' && arr[1].charAt(1) == '0')
+            return arr[0] + "." + arr[1].charAt(0);
+          else
+            return arr[0] + "." + arr[1].charAt(0) + arr[1].charAt(1);
+        } else {
+          if (arr[1].charAt(0) == '0')
+            return arr[0];
+          else
+            return arr[0] + "." + arr[1].charAt(0);
+        }
+      } else {
+        return arr[0];
+      }
+    } else {
+      return num;
+    }
+
+  }
+}
